@@ -22,6 +22,7 @@ wandb
 output
 checkpoints_flant5_3b
 stengo_changes.md
+priv.env
 
 # Data
 *.pkl

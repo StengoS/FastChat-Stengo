@@ -176,8 +176,12 @@ def share_click(state0, state1, model_selector0, model_selector1, request: gr.Re
 
 
 SAMPLING_WEIGHTS = {
-    "gpt-4.1-mini": 2, 
-    "gemini-2.0-flash": 2
+    "gpt-3.5-turbo-0125": 1,
+    "gpt-4.1-mini": 1, 
+    "gemini-1.5-flash": 1,
+    "gemini-2.0-flash": 1,
+    "claude-3.5-haiku": 1,
+    "claude-4-sonnet": 1
 }
 
 # target model sampling weights will be boosted.
