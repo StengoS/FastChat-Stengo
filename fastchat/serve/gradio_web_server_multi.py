@@ -5,6 +5,8 @@ It supports chatting with a single model or chatting with two models side-by-sid
 
 import argparse
 import gradio as gr
+import os
+from pathlib import Path
 
 from fastchat.serve.gradio_block_arena_anony import (
     build_side_by_side_ui_anony,
@@ -191,7 +193,7 @@ window.__gradio_mode__ = "app";
         """
     text_size = gr.themes.sizes.text_lg
     with gr.Blocks(
-        title="Chatbot Arena (formerly LMSYS): Free AI Chat to Compare & Test Best AI Chatbots",
+        title="Stengo's Chatbot Arena",
         theme=gr.themes.Default(text_size=text_size),
         css=block_css,
         head=head_js,
@@ -225,24 +227,24 @@ window.__gradio_mode__ = "app";
                         context.all_text_models
                     )
 
-                with gr.Tab("⚔️ Arena (side-by-side)", id=1) as side_by_side_tab:
-                    side_by_side_tab.select(None, None, None, js=alert_js)
-                    side_by_side_named_list = build_side_by_side_ui_named(
-                        context.text_models
-                    )
+                # Commented out Arena (side-by-side) tab
+                # with gr.Tab("⚔️ Arena (side-by-side)", id=1) as side_by_side_tab:
+                #     side_by_side_tab.select(None, None, None, js=alert_js)
+                #     side_by_side_named_list = build_side_by_side_ui_named(
+                #         context.text_models
+                #     )
+                #     pass
 
-                with gr.Tab("💬 Direct Chat", id=2) as direct_tab:
-                    direct_tab.select(None, None, None, js=alert_js)
-                    single_model_list = build_single_model_ui(
-                        context.text_models, add_promotion_links=True
-                    )
+                # Commented out Direct Chat tab
+                # with gr.Tab("💬 Direct Chat", id=2) as direct_tab:
+                #     direct_tab.select(None, None, None, js=alert_js)
+                #     single_model_list = build_single_model_ui(
+                #         context.text_models, add_promotion_links=True
+                #     )
+                #     pass
 
-            demo_tabs = (
-                [inner_tabs]
-                + side_by_side_anony_list
-                + side_by_side_named_list
-                + single_model_list
-            )
+            # Only include the Arena (battle) tab in the demo_tabs list
+            demo_tabs = [inner_tabs] + side_by_side_anony_list
 
             if elo_results_file:
                 with gr.Tab("🏆 Leaderboard", id=3):
@@ -256,7 +258,63 @@ window.__gradio_mode__ = "app";
                 with gr.Tab("🔍 Arena Visualizer", id=5):
                     build_visualizer()
 
-            with gr.Tab("ℹ️ About Us", id=4):
+            with gr.Tab("🏆 Leaderboard", id=4) as elo_tab:
+                def load_elo_leaderboard():
+                    try:
+                        elo_file = Path("elo_data.txt")
+                        if not elo_file.exists():
+                            return "ELO leaderboard data not found."
+                        
+                        with open(elo_file, 'r') as f:
+                            lines = [line.strip() for line in f.readlines() if line.strip()]
+                        
+                        # Get the last updated time from the first line
+                        last_updated = ""
+                        if lines and lines[0].lower().startswith('# last updated:'):
+                            last_updated = lines[0].split(':', 1)[1].strip()
+                            # Remove the header line
+                            lines = lines[1:]
+                        # Handle case where there's a different header line
+                        elif lines and lines[0].startswith('#'):
+                            lines = lines[1:]
+                        
+                        # Parse the leaderboard data
+                        leaderboard = []
+                        for line in lines:
+                            parts = [p.strip() for p in line.split(',')]
+                            if len(parts) >= 3:
+                                rank = parts[0]
+                                model = parts[1]
+                                score = parts[2]
+                                leaderboard.append((rank, model, score))
+                        
+                        # Create a markdown table
+                        if not leaderboard:
+                            return "No ELO data available."
+                            
+                        markdown = "## 🏆 ELO Leaderboard\n"
+                        if last_updated:
+                            markdown += f"*Last Updated: {last_updated}*\n\n"
+                        else:
+                            markdown += "\n"
+                            
+                        markdown += "| Rank | Model | ELO Score |\n"
+                        markdown += "|------|-------|-----------|\n"
+                        for rank, model, score in leaderboard:
+                            markdown += f"| {rank} | {model} | {score} |\n"
+                        
+                        return markdown
+                    except Exception as e:
+                        return f"Error loading ELO leaderboard: {str(e)}"
+                
+                elo_markdown = gr.Markdown(load_elo_leaderboard())
+                refresh_btn = gr.Button("🔄 Refresh")
+                refresh_btn.click(
+                    lambda: gr.Markdown(load_elo_leaderboard()),
+                    outputs=elo_markdown
+                )
+            
+            with gr.Tab("ℹ️ About Us", id=5):
                 build_about()
 
         context_state = gr.State(context)

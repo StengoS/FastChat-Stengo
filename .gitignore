@@ -9,6 +9,7 @@ dist
 *.log
 *.log.*
 *.json
+!api_endpoint_EXAMPLE.json
 !playground/deepspeed_config_s2.json
 !playground/deepspeed_config_s3.json
 
@@ -23,6 +24,7 @@ output
 checkpoints_flant5_3b
 stengo_changes.md
 priv.env
+elo_data.txt
 
 # Data
 *.pkl

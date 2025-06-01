@@ -71,7 +71,7 @@ acknowledgment_md = """
 
 Users are required to agree to the following terms before using the service:
 
-The service is a research preview. It only provides limited safety measures and may generate offensive content.
+The service is a research preview and meant for a university course project. It only provides limited safety measures and may generate offensive content.
 It must not be used for any illegal, harmful, violent, racist, or sexual purposes.
 Please do not upload any private information.
 The service collects user dialogue data, including both text and images, and reserves the right to distribute it under a Creative Commons Attribution (CC-BY) or a similar license.
@@ -835,12 +835,14 @@ def build_about():
     about_markdown = """
 # About Us
 Chatbot Arena ([lmarena.ai](https://lmarena.ai)) is an open-source platform for evaluating AI through human preference, developed by researchers at UC Berkeley [SkyLab](https://sky.cs.berkeley.edu/) and [LMSYS](https://lmsys.org). An open-source version is available at the [FastChat](https://github.com/lm-sys/FastChat) project on GitHub.
-This is a locally-deployed version meant for SWE295, Programming LLMs (Spring '25) done by [Steven Ngo](mailto:skngo1@uci.edu).
+This is a locally-deployed version meant for SWE295, Programming LLMs (Spring '25) done by [Steven Ngo](https://stengos.github.io/).
 
 ## The original open-source contributors!
 - Leads: [Wei-Lin Chiang](https://infwinston.github.io/), [Anastasios Angelopoulos](https://people.eecs.berkeley.edu/~angelopoulos/)
 - Contributors: [Lianmin Zheng](https://lmzheng.net/), [Ying Sheng](https://sites.google.com/view/yingsheng/home), [Lisa Dunlap](https://www.lisabdunlap.com/), [Christopher Chou](https://www.linkedin.com/in/chrisychou), [Tianle Li](https://codingwithtim.github.io/), [Evan Frick](https://efrick2002.github.io/), [Dacheng Li](https://dachengli1.github.io/), [Siyuan Zhuang](https://www.linkedin.com/in/siyuanzhuang)
 - Advisors: [Ion Stoica](http://people.eecs.berkeley.edu/~istoica/), [Joseph E. Gonzalez](https://people.eecs.berkeley.edu/~jegonzal/), [Hao Zhang](https://cseweb.ucsd.edu/~haozhang/), [Trevor Darrell](https://people.eecs.berkeley.edu/~trevor/)
+
+The original researchers have also since turned their work into a start-up named Arena Intelligence. You can read more about them [here](https://www.bloomberg.com/news/articles/2025-05-21/lmarena-goes-from-academic-project-to-600-million-startup).
 
 ## Learn more from the original work and implementation!
 - Chatbot Arena [paper](https://arxiv.org/abs/2403.04132), [launch blog](https://blog.lmarena.ai/blog/2023/arena/), [dataset](https://github.com/lm-sys/FastChat/blob/main/docs/dataset_release.md), [policy](https://blog.lmarena.ai/blog/2024/policy/)

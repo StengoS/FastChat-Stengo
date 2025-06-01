@@ -513,14 +513,33 @@ def bot_response_multi(
 def build_side_by_side_ui_anony(models):
     # Using double curly braces to escape them in f-strings
     notice_markdown = """
-# ⚔️  Chatbot Arena (formerly LMSYS): Free AI Chat to Compare & Test Best AI Chatbots
+# ⚔️  Stengo's Chatbot Arena: Compare & Test Best AI Chatbots
 
 ## 📜 How It Works
-- **Blind Test**: Ask any question to two anonymous AI chatbots (ChatGPT, Gemini, Claude, Llama, and more).
+- **Blind Test**: Ask any question to two anonymous AI chatbots (currently includes ChatGPT, Claude, and Gemini).
 - **Vote for the Best**: Choose the best response. You can keep chatting until you find a winner.
-- **Play Fair**: If AI identity reveals, your vote won't count.
+- **Play Fair**: If the AI's identity is revealed (especially if it is done intentionally), your vote won't count.
 
-## 👇 Chat now!
+This is a custom version of [LMArena](https://lmarena.ai/), formerly known as Chatbot Arena and originally 
+developed by researchers at UC Berkeley. LMArena/Chatbot Arena's underlying code is [FastChat](https://github.com/lm-sys/FastChat);
+this chatbot arena uses FastChat too but with a few modifications.
+
+## 📚 Education/Teaching-Focused
+For this arena, we would like to focus on comparing the performance of AI chatbots in the context of **education and teaching** -
+at this time, this is very general, so you may ask it to teach or tutor you in any topic you'd like (as long as it does not
+violate the terms of service). This could be helping with math homework, learning a new programming language, figuring
+out a complex physics or chemistry problem, diving deeper into a software engineering concept, and so on.
+
+There are different ways you can evaluate the chatbots in this context:
+- How well can it explain concepts to you as if you were a 5 year old, but without being too overly creative/simplified? 
+- How helpful are the examples it provides where relevant? Are they too simple or overly complex? Relevant to orignal question?
+- Can it provide an answer where you can follow its reasoning? Does it even provide its reasoning?
+- Is it too verbose or did not provide enough details? How well does it do if you give it a vague prompt (e.g., "teach me calculus 1")?
+- If you ask it to not reveal the answer to you and walk you through finding the solution by yourself, does it follow these instructions?
+
+Any chats that are not focused on education/teaching will be marked as invalid and the votes will not count.
+
+## 👇 Get started below!
 
 <style>
 #chatbot {

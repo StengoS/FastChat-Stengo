@@ -47,10 +47,21 @@ register_model_info(
         "gpt-4o-mini-2024-07-18",
         "gpt-4o-2024-08-06",
         "gpt-4o-2024-05-13",
+
     ],
     "GPT-4o",
     "https://openai.com/index/hello-gpt-4o/",
     "The flagship model across audio, vision, and text by OpenAI",
+)
+
+register_model_info(
+    [
+        "gpt-4.1-mini-2025-04-14",
+        "gpt-4.1-mini",
+    ],
+    "GPT-4.1",
+    "https://openai.com/index/gpt-4-1/",
+    "The GPT‑4.1 model family by OpenAI", 
 )
 
 register_model_info(
@@ -65,10 +76,21 @@ register_model_info(
 
 register_model_info(
     [
+        "claude-sonnet-4-20250514",
+        "claude-4-sonnet",
+    ],
+    "Claude 4",
+    "https://www.anthropic.com/news/claude-4",
+    "Claude by Anthropic",
+)
+
+register_model_info(
+    [
         "claude-3-5-sonnet-20240620",
+        "claude-3-5-haiku-20241022",
     ],
     "Claude 3.5",
-    "https://www.anthropic.com/news/claude-3-5-sonnet",
+    "https://anthropic.com/claude",
     "Claude by Anthropic",
 )
 
@@ -102,6 +124,8 @@ register_model_info(
         "gemini-1.5-pro-api-0514",
         "gemini-1.5-flash-api-0514",
         "gemini-advanced-0514",
+        "gemini-1.5-flash",
+        "gemini-2.0-flash",
     ],
     "Gemini",
     "https://deepmind.google/technologies/gemini/",
@@ -154,6 +178,7 @@ register_model_info(
 
 register_model_info(
     [
+        "claude-3.5-haiku",
         "claude-3-haiku-20240307",
         "claude-3-sonnet-20240229",
         "claude-3-opus-20240229",
