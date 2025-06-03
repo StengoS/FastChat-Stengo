@@ -25,6 +25,7 @@ checkpoints_flant5_3b
 stengo_changes.md
 priv.env
 elo_data.txt
+*.prompt
 
 # Data
 *.pkl

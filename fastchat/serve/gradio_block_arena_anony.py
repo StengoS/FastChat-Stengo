@@ -63,10 +63,18 @@ def load_demo_side_by_side_anony(models_, url_params):
         gr.Markdown(visible=True),
     ]
 
+    buttons = [None] * 6
+    feedback_box = gr.Textbox(label="Feedback", visible=True)
+    buttons[0], buttons[1], buttons[2], buttons[3], buttons[4], buttons[5] = flash_buttons(buttons, feedback_box)
+    for btn in buttons:
+        if btn is not None:
+            btn.update(interactive=True, visible=True)
+    return [btn.update(visible=True) for btn in buttons] + [feedback_box.update(visible=True)]
+
     return states + selector_updates
 
 
-def vote_last_response(states, vote_type, model_selectors, request: gr.Request):
+def vote_last_response(states, vote_type, model_selectors, feedback, request: gr.Request):
     with open(get_conv_log_filename(), "a") as fout:
         data = {
             "tstamp": round(time.time(), 4),
@@ -74,12 +82,13 @@ def vote_last_response(states, vote_type, model_selectors, request: gr.Request):
             "models": [x for x in model_selectors],
             "states": [x.dict() for x in states],
             "ip": get_ip(request),
+            "feedback": feedback if feedback else "SYSTEM: No feedback provided.",
         }
         fout.write(json.dumps(data) + "\n")
     get_remote_logger().log(data)
 
     gr.Info(
-        "🎉 Thanks for voting! Your vote shapes the leaderboard, please vote RESPONSIBLY."
+        "🎉 Thanks for voting! Your vote shapes the leaderboard, so please vote responsibly."
     )
     if ":" not in model_selectors[0]:
         for i in range(5):
@@ -88,7 +97,7 @@ def vote_last_response(states, vote_type, model_selectors, request: gr.Request):
                 "### Model B: " + states[1].model_name,
             )
             # yield names + ("",) + (disable_btn,) * 4
-            yield names + (disable_text,) + (disable_btn,) * 5
+            yield names + (disable_text,) + (disable_btn,) * 5 + ("",)
             time.sleep(0.1)
     else:
         names = (
@@ -96,45 +105,45 @@ def vote_last_response(states, vote_type, model_selectors, request: gr.Request):
             "### Model B: " + states[1].model_name,
         )
         # yield names + ("",) + (disable_btn,) * 4
-        yield names + (disable_text,) + (disable_btn,) * 5
+        yield names + (disable_text,) + (disable_btn,) * 5 + ("",)
 
 
 def leftvote_last_response(
-    state0, state1, model_selector0, model_selector1, request: gr.Request
+    state0, state1, model_selector0, model_selector1, feedback, request: gr.Request
 ):
     logger.info(f"leftvote (anony). ip: {get_ip(request)}")
     for x in vote_last_response(
-        [state0, state1], "leftvote", [model_selector0, model_selector1], request
+        [state0, state1], "leftvote", [model_selector0, model_selector1], feedback, request
     ):
         yield x
 
 
 def rightvote_last_response(
-    state0, state1, model_selector0, model_selector1, request: gr.Request
+    state0, state1, model_selector0, model_selector1, feedback, request: gr.Request
 ):
     logger.info(f"rightvote (anony). ip: {get_ip(request)}")
     for x in vote_last_response(
-        [state0, state1], "rightvote", [model_selector0, model_selector1], request
+        [state0, state1], "rightvote", [model_selector0, model_selector1], feedback, request
     ):
         yield x
 
 
 def tievote_last_response(
-    state0, state1, model_selector0, model_selector1, request: gr.Request
+    state0, state1, model_selector0, model_selector1, feedback, request: gr.Request
 ):
     logger.info(f"tievote (anony). ip: {get_ip(request)}")
     for x in vote_last_response(
-        [state0, state1], "tievote", [model_selector0, model_selector1], request
+        [state0, state1], "tievote", [model_selector0, model_selector1], feedback, request
     ):
         yield x
 
 
 def bothbad_vote_last_response(
-    state0, state1, model_selector0, model_selector1, request: gr.Request
+    state0, state1, model_selector0, model_selector1, feedback, request: gr.Request
 ):
     logger.info(f"bothbad_vote (anony). ip: {get_ip(request)}")
     for x in vote_last_response(
-        [state0, state1], "bothbad_vote", [model_selector0, model_selector1], request
+        [state0, state1], "bothbad_vote", [model_selector0, model_selector1], feedback, request
     ):
         yield x
 
@@ -178,10 +187,13 @@ def share_click(state0, state1, model_selector0, model_selector1, request: gr.Re
 SAMPLING_WEIGHTS = {
     "gpt-3.5-turbo-0125": 1,
     "gpt-4.1-mini": 1, 
+    "gpt-4.1-nano": 1,
+    "o1-mini": 1,
     "gemini-1.5-flash": 1,
     "gemini-2.0-flash": 1,
-    "claude-3.5-haiku": 1,
-    "claude-4-sonnet": 1
+    "gemini-2.0-flash-lite": 1,
+    "gemini-2.5-flash-preview": 1,
+
 }
 
 # target model sampling weights will be boosted.
@@ -365,15 +377,15 @@ def add_text(
     if len(text) <= 0:
         for i in range(num_sides):
             states[i].skip_next = True
+        # Create feedback box component
+        feedback_box = gr.Textbox(visible=False)
         return (
             states
             + [x.to_gradio_chatbot() for x in states]
             + ["", None]
-            + [
-                no_change_btn,
-            ]
-            * 6
+            + [no_change_btn] * 6
             + [""]
+            + [feedback_box]
         )
 
     model_list = [states[i].model_name for i in range(num_sides)]
@@ -394,15 +406,15 @@ def add_text(
         logger.info(f"conversation turn limit. ip: {get_ip(request)}. text: {text}")
         for i in range(num_sides):
             states[i].skip_next = True
+        # Create feedback box component
+        feedback_box = gr.Textbox(visible=False)
         return (
             states
             + [x.to_gradio_chatbot() for x in states]
             + [CONVERSATION_LIMIT_MSG]
-            + [
-                no_change_btn,
-            ]
-            * 6
+            + [no_change_btn] * 6
             + [""]
+            + [feedback_box]
         )
 
     text = text[:BLIND_MODE_INPUT_CHAR_LEN_LIMIT]  # Hard cut-off
@@ -415,15 +427,15 @@ def add_text(
     for i in range(num_sides):
         if "deluxe" in states[i].model_name:
             hint_msg = SLOW_MODEL_MSG
+    # Create feedback box component
+    feedback_box = gr.Textbox(visible=True)
     return (
         states
         + [x.to_gradio_chatbot() for x in states]
         + [""]
-        + [
-            disable_btn,
-        ]
-        * 6
+        + [disable_btn] * 6
         + [hint_msg]
+        + [feedback_box]
     )
 
 
@@ -436,15 +448,20 @@ def bot_response_multi(
     request: gr.Request,
 ):
     logger.info(f"bot_response_multi (anony). ip: {get_ip(request)}")
+    
+    # Create feedback box component
+    feedback_box = gr.Textbox(visible=True)
 
     if state0 is None or state0.skip_next:
         # This generate call is skipped due to invalid inputs
         yield (
             state0,
             state1,
-            state0.to_gradio_chatbot(),
-            state1.to_gradio_chatbot(),
-        ) + (no_change_btn,) * 6
+            state0.to_gradio_chatbot() if state0 else None,
+            state1.to_gradio_chatbot() if state1 else None,
+            *([no_change_btn] * 6),
+            feedback_box
+        )
         return
 
     states = [state0, state1]
@@ -505,7 +522,7 @@ def bot_response_multi(
                 stop = False
             except StopIteration:
                 pass
-        yield states + chatbots + [disable_btn] * 6
+        yield states + chatbots + [disable_btn] * 6 + [feedback_box]
         if stop:
             break
 
@@ -621,6 +638,17 @@ Any chats that are not focused on education/teaching will be marked as invalid a
             slow_warning = gr.Markdown("")
 
     with gr.Row():
+        feedback_box = gr.Textbox(
+            label="Optional feedback (Why is one response better than the other?)",
+            placeholder="Your feedback helps improve the models. This is optional but appreciated!",
+            visible=False,
+            interactive=True,
+            lines=2,
+            max_lines=4,
+            container=True,
+        )
+        
+    with gr.Row():
         leftvote_btn = gr.Button(
             value="👈  A is better", visible=False, interactive=False
         )
@@ -684,25 +712,25 @@ Any chats that are not focused on education/teaching will be marked as invalid a
     ]
     leftvote_btn.click(
         leftvote_last_response,
-        states + model_selectors,
+        states + model_selectors + [feedback_box],
         model_selectors
         + [textbox, leftvote_btn, rightvote_btn, tie_btn, bothbad_btn, send_btn],
     )
     rightvote_btn.click(
         rightvote_last_response,
-        states + model_selectors,
+        states + model_selectors + [feedback_box],
         model_selectors
         + [textbox, leftvote_btn, rightvote_btn, tie_btn, bothbad_btn, send_btn],
     )
     tie_btn.click(
         tievote_last_response,
-        states + model_selectors,
+        states + model_selectors + [feedback_box],
         model_selectors
         + [textbox, leftvote_btn, rightvote_btn, tie_btn, bothbad_btn, send_btn],
     )
     bothbad_btn.click(
         bothbad_vote_last_response,
-        states + model_selectors,
+        states + model_selectors + [feedback_box],
         model_selectors
         + [textbox, leftvote_btn, rightvote_btn, tie_btn, bothbad_btn, send_btn],
     )
@@ -711,9 +739,9 @@ Any chats that are not focused on education/teaching will be marked as invalid a
     ).then(
         bot_response_multi,
         states + [temperature, top_p, max_output_tokens],
-        states + chatbots + btn_list,
+        states + chatbots + btn_list + [feedback_box],
     ).then(
-        flash_buttons, [], btn_list
+        flash_buttons, [feedback_box], btn_list + [feedback_box]
     )
     clear_btn.click(
         clear_history,
@@ -756,11 +784,11 @@ function (a, b, c, d) {
     ).then(
         bot_response_multi,
         states + [temperature, top_p, max_output_tokens],
-        states + chatbots + btn_list,
+        states + chatbots + btn_list + [feedback_box],
     ).then(
         flash_buttons,
-        [],
-        btn_list,
+        [feedback_box],
+        btn_list + [feedback_box],
     )
 
     send_btn.click(
@@ -770,9 +798,9 @@ function (a, b, c, d) {
     ).then(
         bot_response_multi,
         states + [temperature, top_p, max_output_tokens],
-        states + chatbots + btn_list,
+        states + chatbots + btn_list + [feedback_box],
     ).then(
-        flash_buttons, [], btn_list
+        flash_buttons, [feedback_box], btn_list + [feedback_box]
     )
 
-    return states + model_selectors
+    return states + model_selectors + [feedback_box]

@@ -301,10 +301,10 @@ def bot_response_multi(
             break
 
 
-def flash_buttons():
+def flash_buttons(feedback_box=None):
     btn_updates = [
-        [disable_btn] * 4 + [enable_btn] * 2,
-        [enable_btn] * 6,
+        [disable_btn] * 4 + [enable_btn] * 2 + [feedback_box],
+        [enable_btn] * 6 + [feedback_box],
     ]
     for i in range(4):
         yield btn_updates[i % 2]

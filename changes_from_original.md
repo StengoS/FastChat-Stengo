@@ -4,19 +4,24 @@ Changes made to this version of FastChat:
 * Added `api_endpoint.json` to be able to use the locally-deployed version of the arena with proprietary models through their respective APIs.
 * Allowed for scrolling through the models' outputs in the frontend site's chat interface with the side-by-side comparisons.
 
-I used Windsurf to help with the following:
+I used Windsurf's SWE-1 to help with the following:
 * How models get randomly selected the Arena (battle) version by setting defaults to be 1.0 instead.
 * Scrolling down in the chat interface for the models' outputs that go beyond the chat interface.
 * Adding a "Leaderboard" tab to the site (a reduced version of one from the original since I don't have the data that the orignal does).
 * Quickly finding specific text displayed in the frontend to modify.
+* Implement a feedback input box when voting for on models to collect qualitative data on *why* someone voted for a model over the other (took a lot more trial-and-error than expected; not yet able to figure out how to clear text from the box).
 
 Current models in use (all through API usage):
 - gpt-3.5-turbo
 - gpt-4.1-mini
+- gpt-4.1-nano
+- o1-mini
 - gemini-1.5-flash
 - gemini-2.0-flash
-- claude-3.5-haiku
-- claude-4-sonnet
+- gemini-2.0-flash-lite
+- gemini-2.5-flash-preview
+
+Did try to use Claude models, but they were found to not be working with FastChat - most likely need to fix the original's implementation, but have not had a chance to do this yet. Did try with Windsurf's SWE-1, but was not successful. 
 
 Other notes:
 * Have to set up `api_endpoint.json` on your own, but very simple and there are enough instructions to get started.
